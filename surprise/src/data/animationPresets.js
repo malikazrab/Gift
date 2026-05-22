@@ -24,6 +24,8 @@ export const ANIMATION_PRESET = {
   },
 }
 
+export const DEFAULT_EASE = [0.22, 1, 0.36, 1]
+
 // Fade in variants
 export const fadeInVariants = {
   hidden: { opacity: 0 },
@@ -69,5 +71,162 @@ export const scrollAnimationConfig = {
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true, amount: 0.3 },
-  transition: { duration: 0.75, ease: [0.22, 1, 0.36, 1] },
+  transition: { duration: 0.75, ease: DEFAULT_EASE },
+}
+
+export function getViewportConfig(amount = 0.3, isLowPowerMode = false) {
+  return {
+    once: true,
+    amount: isLowPowerMode ? Math.min(amount, 0.2) : amount,
+  }
+}
+
+export function getRevealAnimation({
+  prefersReducedMotion,
+  isLowPowerMode = false,
+  amount = 0.3,
+  delay = 0,
+  duration = 0.75,
+  x = 0,
+  y = 28,
+  scale,
+  rotateX,
+}) {
+  if (prefersReducedMotion) {
+    return {
+      initial: false,
+      whileInView: undefined,
+      viewport: getViewportConfig(amount, isLowPowerMode),
+      transition: undefined,
+    }
+  }
+
+  const distanceMultiplier = isLowPowerMode ? 0.65 : 1
+  const hidden = { opacity: 0 }
+  const visible = { opacity: 1 }
+
+  if (x) {
+    hidden.x = x * distanceMultiplier
+    visible.x = 0
+  }
+
+  if (y) {
+    hidden.y = y * distanceMultiplier
+    visible.y = 0
+  }
+
+  if (typeof scale === 'number') {
+    hidden.scale = isLowPowerMode ? Math.max(scale, 0.985) : scale
+    visible.scale = 1
+  }
+
+  if (typeof rotateX === 'number' && !isLowPowerMode) {
+    hidden.rotateX = rotateX
+    visible.rotateX = 0
+  }
+
+  return {
+    initial: hidden,
+    whileInView: visible,
+    viewport: getViewportConfig(amount, isLowPowerMode),
+    transition: {
+      duration: Math.max(0.24, duration * (isLowPowerMode ? 0.82 : 1)),
+      delay: isLowPowerMode ? Math.min(delay, 0.12) : delay,
+      ease: DEFAULT_EASE,
+    },
+  }
+}
+
+export function getEntranceAnimation({
+  prefersReducedMotion,
+  isLowPowerMode = false,
+  delay = 0,
+  duration = 0.75,
+  x = 0,
+  y = 24,
+  scale,
+  rotateX,
+}) {
+  if (prefersReducedMotion) {
+    return {
+      initial: false,
+      animate: undefined,
+      transition: undefined,
+    }
+  }
+
+  const distanceMultiplier = isLowPowerMode ? 0.65 : 1
+  const initial = { opacity: 0 }
+  const animate = { opacity: 1 }
+
+  if (x) {
+    initial.x = x * distanceMultiplier
+    animate.x = 0
+  }
+
+  if (y) {
+    initial.y = y * distanceMultiplier
+    animate.y = 0
+  }
+
+  if (typeof scale === 'number') {
+    initial.scale = isLowPowerMode ? Math.max(scale, 0.985) : scale
+    animate.scale = 1
+  }
+
+  if (typeof rotateX === 'number' && !isLowPowerMode) {
+    initial.rotateX = rotateX
+    animate.rotateX = 0
+  }
+
+  return {
+    initial,
+    animate,
+    transition: {
+      duration: Math.max(0.22, duration * (isLowPowerMode ? 0.82 : 1)),
+      delay: isLowPowerMode ? Math.min(delay, 0.12) : delay,
+      ease: DEFAULT_EASE,
+    },
+  }
+}
+
+export function getHoverAnimation({
+  canHover,
+  isLowPowerMode = false,
+  y = -8,
+  scale,
+  rotate,
+  rotateX,
+  rotateY,
+  duration = 0.25,
+}) {
+  if (!canHover || isLowPowerMode) {
+    return undefined
+  }
+
+  const hoverAnimation = {
+    y,
+    transition: {
+      duration,
+      ease: 'easeOut',
+    },
+  }
+
+  if (typeof scale === 'number') {
+    hoverAnimation.scale = scale
+  }
+
+  if (typeof rotate === 'number') {
+    hoverAnimation.rotate = rotate
+  }
+
+  if (typeof rotateX === 'number') {
+    hoverAnimation.rotateX = rotateX
+  }
+
+  if (typeof rotateY === 'number') {
+    hoverAnimation.rotateY = rotateY
+  }
+
+  return hoverAnimation
 }

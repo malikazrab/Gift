@@ -5,6 +5,12 @@ import PageShell from '../components/PageShell'
 import PageGift from '../components/PageGift'
 import PaperHeartReveal from '../components/PaperHeartReveal'
 import {
+  getEntranceAnimation,
+  getHoverAnimation,
+  getRevealAnimation,
+} from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
+import {
   floatingHearts,
   loveNotes,
   pageGifts,
@@ -13,8 +19,40 @@ import {
 
 function HomePage() {
   const prefersReducedMotion = useReducedMotion()
+  const { canHover, isLowPowerMode, shouldReduceAmbientMotion } = usePerformanceMode()
   const heroRef = useRef(null)
   const heroInView = useInView(heroRef, { amount: 0.2 })
+  const visibleHearts = shouldReduceAmbientMotion
+    ? floatingHearts.slice(0, 5)
+    : floatingHearts
+  const heroBadgeAnimation = getEntranceAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    y: 24,
+    delay: 0.15,
+    duration: 0.7,
+  })
+  const heroTitleAnimation = getEntranceAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    y: 36,
+    delay: 0.28,
+    duration: 0.95,
+  })
+  const heroTextAnimation = getEntranceAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    y: 28,
+    delay: 0.42,
+    duration: 0.8,
+  })
+  const heroSignatureAnimation = getEntranceAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    y: 16,
+    delay: 0.58,
+    duration: 0.65,
+  })
 
   return (
     <PageShell
@@ -34,8 +72,8 @@ function HomePage() {
     >
       <section className="hero-section hero-section--inner" ref={heroRef}>
         <div className="floating-hearts" aria-hidden="true">
-          {floatingHearts.map((heart) => (
-            <motion.span
+          {visibleHearts.map((heart) => (
+            <span
               className="floating-heart"
               key={heart.id}
               style={{
@@ -45,66 +83,55 @@ function HomePage() {
                 '--heart-left-mobile': heart.mobileLeft,
                 '--heart-size': heart.size,
                 '--heart-size-mobile': heart.mobileSize,
+                '--heart-drift-x': `${heart.driftX}px`,
+                '--heart-drift-y': `${heart.driftY}px`,
+                '--heart-rotate': `${heart.rotate}deg`,
+                '--heart-duration': `${shouldReduceAmbientMotion ? heart.duration + 1.2 : heart.duration}s`,
+                '--heart-delay': `${heart.delay}s`,
               }}
-              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.75 }}
-              animate={
+              data-ambient-motion={
                 prefersReducedMotion || !heroInView
-                  ? undefined
-                  : {
-                      x: [0, heart.driftX, heart.driftX * -0.55, 0],
-                      y: [0, heart.driftY * -1, heart.driftY * 0.45, 0],
-                      rotate: [0, heart.rotate, heart.rotate * -0.45, 0],
-                      scale: [1, 1.08, 0.96, 1.03, 1],
-                      opacity: [0.22, 0.42, 0.3, 0.38, 0.22],
-                    }
-              }
-              transition={{
-                duration: heart.duration,
-                delay: heart.delay,
-                repeat: Number.POSITIVE_INFINITY,
-                ease: 'easeInOut',
-              }}
-              whileHover={
-                prefersReducedMotion
-                  ? undefined
-                  : { scale: 1.16, opacity: 0.5, transition: { duration: 0.24 } }
+                  ? 'paused'
+                  : shouldReduceAmbientMotion
+                    ? 'soft'
+                    : 'full'
               }
             >
               ♥
-            </motion.span>
+            </span>
           ))}
         </div>
 
         <motion.p
           className="hero-badge"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, delay: 0.15, ease: 'easeOut' }}
+          initial={heroBadgeAnimation.initial}
+          animate={heroBadgeAnimation.animate}
+          transition={heroBadgeAnimation.transition}
         >
           Made with love for Maria
         </motion.p>
         <motion.h2
           className="hero-title hero-title--compact"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 36 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.95, delay: 0.28, ease: [0.22, 1, 0.36, 1] }}
+          initial={heroTitleAnimation.initial}
+          animate={heroTitleAnimation.animate}
+          transition={heroTitleAnimation.transition}
         >
           To the woman who makes my whole world softer, brighter, and alive.
         </motion.h2>
         <motion.p
           className="hero-text"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 28 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.42, ease: 'easeOut' }}
+          initial={heroTextAnimation.initial}
+          animate={heroTextAnimation.animate}
+          transition={heroTextAnimation.transition}
         >
           You are my peace, my favorite smile, and the most beautiful part of my
           story.
         </motion.p>
         <motion.p
           className="hero-signature"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
-          animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          transition={{ duration: 0.65, delay: 0.58, ease: 'easeOut' }}
+          initial={heroSignatureAnimation.initial}
+          animate={heroSignatureAnimation.animate}
+          transition={heroSignatureAnimation.transition}
         >
           Created by Azrab
         </motion.p>
@@ -122,21 +149,22 @@ function HomePage() {
             <motion.article
               className="love-note"
               key={note.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 28, rotateX: -8 }}
-              whileInView={
-                prefersReducedMotion ? undefined : { opacity: 1, y: 0, rotateX: 0 }
-              }
-              viewport={{ once: true, amount: 0.28 }}
-              transition={{
-                duration: 0.75,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.28,
                 delay: index * 0.08,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              whileHover={
-                prefersReducedMotion
-                  ? undefined
-                  : { y: -8, scale: 1.015, transition: { duration: 0.25 } }
-              }
+                duration: 0.75,
+                y: 28,
+                rotateX: -8,
+              })}
+              whileHover={getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                y: -8,
+                scale: 1.015,
+                duration: 0.25,
+              })}
             >
               <span className="note-heart">♥</span>
               <p>{note.text}</p>
@@ -163,26 +191,23 @@ function HomePage() {
             <motion.article
               className="promise-card"
               key={card.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 42, scale: 0.96 }}
-              whileInView={
-                prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
-              }
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.8,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.3,
                 delay: index * 0.1,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              whileHover={
-                prefersReducedMotion
-                  ? undefined
-                  : {
-                      y: -10,
-                      rotateX: -4,
-                      rotateY: index % 2 === 0 ? -3 : 3,
-                      transition: { duration: 0.28 },
-                    }
-              }
+                duration: 0.8,
+                y: 42,
+                scale: 0.96,
+              })}
+              whileHover={getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                y: -10,
+                rotateX: -4,
+                rotateY: index % 2 === 0 ? -3 : 3,
+                duration: 0.28,
+              })}
             >
               <span className="promise-glow" aria-hidden="true" />
               <p>{card.text}</p>
@@ -194,7 +219,6 @@ function HomePage() {
       <section className="content-section">
         <div className="journey-grid">
           <article className="journey-card">
-            <p className="eyebrow">Page One</p>
             <h3>Our Story</h3>
             <p>
               Walk through the soft chapters of how my heart learned to stay
@@ -206,7 +230,6 @@ function HomePage() {
           </article>
 
           <article className="journey-card">
-            <p className="eyebrow">Page Two</p>
             <h3>Why You</h3>
             <p>
               A page full of all the reasons your soul feels like my favorite
@@ -218,7 +241,6 @@ function HomePage() {
           </article>
 
           <article className="journey-card">
-            <p className="eyebrow">Page Three</p>
             <h3>Promises</h3>
             <p>
               Tiny promises, future dreams, and the parts of tomorrow I want

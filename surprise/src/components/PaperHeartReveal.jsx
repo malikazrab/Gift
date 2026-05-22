@@ -2,6 +2,11 @@ import { useEffect, useRef, useState } from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import gsap from 'gsap'
 import couplePhoto from '../assets/maria-heart-photo.jpeg'
+import {
+  getHoverAnimation,
+  getRevealAnimation,
+} from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 function PaperHeartReveal({
   photo = couplePhoto,
@@ -13,6 +18,7 @@ function PaperHeartReveal({
   regionLabel = 'A photo memory of Azrab and Maria',
 }) {
   const prefersReducedMotion = useReducedMotion()
+  const { canHover, isLowPowerMode } = usePerformanceMode()
   const heartShellRef = useRef(null)
   const heartBackdropRef = useRef(null)
   const heartLeftLobeRef = useRef(null)
@@ -38,7 +44,7 @@ function PaperHeartReveal({
     }
 
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    const durationScale = prefersReducedMotion ? 0.01 : 1
+    const durationScale = prefersReducedMotion ? 0.01 : isLowPowerMode ? 0.82 : 1
 
     gsap.set(
       [
@@ -213,7 +219,16 @@ function PaperHeartReveal({
     }
 
     return () => tl.kill()
-  }, [heartOpen, prefersReducedMotion])
+  }, [heartOpen, isLowPowerMode, prefersReducedMotion])
+
+  const heartEntrance = getRevealAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    amount: 0.55,
+    y: 30,
+    scale: 0.9,
+    duration: 0.9,
+  })
 
   return (
     <div className={`heart-stage ${heartOpen ? 'is-open' : ''}`}>
@@ -225,16 +240,22 @@ function PaperHeartReveal({
         aria-expanded={heartOpen}
         aria-controls="heart-photo-reveal"
         aria-describedby="heart-help"
-        initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.9, y: 30 }}
-        whileInView={prefersReducedMotion ? undefined : { opacity: 1, scale: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.55 }}
-        transition={{ duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        initial={heartEntrance.initial}
+        whileInView={heartEntrance.whileInView}
+        viewport={heartEntrance.viewport}
+        transition={heartEntrance.transition}
         whileHover={
-          prefersReducedMotion || heartOpen
+          heartOpen
             ? undefined
-            : { scale: 1.03, y: -10, transition: { duration: 0.28 } }
+            : getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                scale: 1.03,
+                y: -10,
+                duration: 0.28,
+              })
         }
-        whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+        whileTap={prefersReducedMotion ? undefined : { scale: isLowPowerMode ? 0.99 : 0.98 }}
       >
         <span className="paper-heart-scene" aria-hidden="true">
           <span className="paper-heart-backdrop" ref={heartBackdropRef} />
@@ -261,7 +282,7 @@ function PaperHeartReveal({
         className="heart-help"
         id="heart-help"
         animate={heartOpen ? { opacity: 0, y: 10 } : { opacity: 1, y: 0 }}
-        transition={{ duration: 0.28, ease: 'easeOut' }}
+        transition={{ duration: isLowPowerMode ? 0.2 : 0.28, ease: 'easeOut' }}
       >
         {helperText}
       </motion.p>

@@ -3,10 +3,13 @@ import { motion, useReducedMotion } from 'framer-motion'
 import PageGift from '../components/PageGift'
 import PaperHeartReveal from '../components/PaperHeartReveal'
 import PageShell from '../components/PageShell'
+import { getHoverAnimation, getRevealAnimation } from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 import { futureDreams, giftMoments, pageGifts } from '../data/siteContent'
 
 function PromisesPage() {
   const prefersReducedMotion = useReducedMotion()
+  const { canHover, isLowPowerMode } = usePerformanceMode()
 
   return (
     <PageShell
@@ -46,26 +49,23 @@ function PromisesPage() {
             <motion.article
               className="gift-card"
               key={gift.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 48, scale: 0.95 }}
-              whileInView={
-                prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
-              }
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{
-                duration: 0.85,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.25,
                 delay: index * 0.12,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              whileHover={
-                prefersReducedMotion
-                  ? undefined
-                  : {
-                      y: -12,
-                      rotateX: -5,
-                      rotateY: index % 2 === 0 ? 4 : -4,
-                      transition: { duration: 0.28 },
-                    }
-              }
+                duration: 0.85,
+                y: 48,
+                scale: 0.95,
+              })}
+              whileHover={getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                y: -12,
+                rotateX: -5,
+                rotateY: index % 2 === 0 ? 4 : -4,
+                duration: 0.28,
+              })}
             >
               <div className="gift-top">
                 <span className="gift-ribbon" aria-hidden="true" />
@@ -89,14 +89,14 @@ function PromisesPage() {
             <motion.article
               className="dream-card"
               key={dream.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 34 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.3 }}
-              transition={{
-                duration: 0.72,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.3,
                 delay: index * 0.08,
-                ease: [0.22, 1, 0.36, 1],
-              }}
+                duration: 0.72,
+                y: 34,
+              })}
             >
               <h3>{dream.title}</h3>
               <p>{dream.text}</p>
@@ -108,10 +108,13 @@ function PromisesPage() {
       <section className="content-section">
         <motion.article
           className="final-letter"
-          initial={prefersReducedMotion ? false : { opacity: 0, y: 32 }}
-          whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.5 }}
-          transition={{ duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
+          {...getRevealAnimation({
+            prefersReducedMotion,
+            isLowPowerMode,
+            amount: 0.5,
+            duration: 0.8,
+            y: 32,
+          })}
         >
           <p className="eyebrow">From Azrab</p>
           <h2>I hope this whole little website feels like a warm hug from me.</h2>

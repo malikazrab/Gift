@@ -3,10 +3,13 @@ import { motion, useReducedMotion } from 'framer-motion'
 import PageGift from '../components/PageGift'
 import PaperHeartReveal from '../components/PaperHeartReveal'
 import PageShell from '../components/PageShell'
+import { getRevealAnimation } from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 import { pageGifts, storyMoments } from '../data/siteContent'
 
 function StoryPage() {
   const prefersReducedMotion = useReducedMotion()
+  const { isLowPowerMode } = usePerformanceMode()
 
   return (
     <PageShell
@@ -41,14 +44,14 @@ function StoryPage() {
             <motion.article
               className={`timeline-card ${index % 2 === 0 ? 'left' : 'right'}`}
               key={moment.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 36 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{
-                duration: 0.78,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.35,
                 delay: index * 0.06,
-                ease: [0.22, 1, 0.36, 1],
-              }}
+                duration: 0.78,
+                y: 36,
+              })}
             >
               <span className="timeline-number">{`0${index + 1}`}</span>
               <h3>{moment.title}</h3>
@@ -67,10 +70,14 @@ function StoryPage() {
         <div className="insight-grid">
           <motion.article
             className="insight-card"
-            initial={prefersReducedMotion ? false : { opacity: 0, x: -24 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.7, ease: 'easeOut' }}
+            {...getRevealAnimation({
+              prefersReducedMotion,
+              isLowPowerMode,
+              amount: 0.4,
+              duration: 0.7,
+              x: -24,
+              y: 0,
+            })}
           >
             <h3>Your love feels safe.</h3>
             <p>
@@ -81,10 +88,15 @@ function StoryPage() {
 
           <motion.article
             className="insight-card"
-            initial={prefersReducedMotion ? false : { opacity: 0, x: 24 }}
-            whileInView={prefersReducedMotion ? undefined : { opacity: 1, x: 0 }}
-            viewport={{ once: true, amount: 0.4 }}
-            transition={{ duration: 0.7, delay: 0.08, ease: 'easeOut' }}
+            {...getRevealAnimation({
+              prefersReducedMotion,
+              isLowPowerMode,
+              amount: 0.4,
+              delay: 0.08,
+              duration: 0.7,
+              x: 24,
+              y: 0,
+            })}
           >
             <h3>Your presence feels like home.</h3>
             <p>

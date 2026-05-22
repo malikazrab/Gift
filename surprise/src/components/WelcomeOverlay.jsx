@@ -6,6 +6,7 @@ import {
   useReducedMotion,
   useTransform,
 } from 'framer-motion'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 const COMPLETE_THRESHOLD = 0.82
 const VELOCITY_THRESHOLD = 950
@@ -14,6 +15,7 @@ const COMPACT_VELOCITY_THRESHOLD = 720
 
 function WelcomeOverlay({ onDismiss }) {
   const prefersReducedMotion = useReducedMotion()
+  const { isLowPowerMode } = usePerformanceMode()
   const swipeTrackRef = useRef(null)
   const swipeHandleRef = useRef(null)
   const [welcomeClosing, setWelcomeClosing] = useState(false)
@@ -95,7 +97,7 @@ function WelcomeOverlay({ onDismiss }) {
 
   const finishDismiss = () => {
     setWelcomeClosing(true)
-    const removalDelay = prefersReducedMotion ? 80 : 420
+    const removalDelay = prefersReducedMotion ? 80 : isLowPowerMode ? 260 : 420
     window.setTimeout(() => {
       onDismiss?.()
     }, removalDelay)
@@ -122,10 +124,10 @@ function WelcomeOverlay({ onDismiss }) {
     if (shouldComplete) {
       await animate(swipeX, maxSwipeDistance, {
         type: prefersReducedMotion ? 'tween' : 'spring',
-        stiffness: 260,
-        damping: 24,
+        stiffness: isLowPowerMode ? 220 : 260,
+        damping: isLowPowerMode ? 28 : 24,
         mass: 0.9,
-        duration: prefersReducedMotion ? 0.2 : undefined,
+        duration: prefersReducedMotion ? 0.2 : isLowPowerMode ? 0.22 : undefined,
       })
       finishDismiss()
       return
@@ -133,10 +135,10 @@ function WelcomeOverlay({ onDismiss }) {
 
     await animate(swipeX, 0, {
       type: prefersReducedMotion ? 'tween' : 'spring',
-      stiffness: 380,
-      damping: 26,
+      stiffness: isLowPowerMode ? 300 : 380,
+      damping: isLowPowerMode ? 30 : 26,
       mass: 0.72,
-      duration: prefersReducedMotion ? 0.18 : undefined,
+      duration: prefersReducedMotion ? 0.18 : isLowPowerMode ? 0.2 : undefined,
     })
   }
 
@@ -145,7 +147,10 @@ function WelcomeOverlay({ onDismiss }) {
       className={`welcome-overlay ${welcomeClosing ? 'closing' : ''}`}
       initial={prefersReducedMotion ? false : { opacity: 0 }}
       animate={welcomeClosing ? { opacity: 0 } : { opacity: 1 }}
-      transition={{ duration: prefersReducedMotion ? 0.16 : 0.38, ease: 'easeOut' }}
+      transition={{
+        duration: prefersReducedMotion ? 0.16 : isLowPowerMode ? 0.26 : 0.38,
+        ease: 'easeOut',
+      }}
     >
       <motion.div
         className="welcome-card"
@@ -169,7 +174,7 @@ function WelcomeOverlay({ onDismiss }) {
               }
         }
         transition={{
-          duration: prefersReducedMotion ? 0.18 : 0.72,
+          duration: prefersReducedMotion ? 0.18 : isLowPowerMode ? 0.48 : 0.72,
           ease: [0.22, 1, 0.36, 1],
         }}
       >
@@ -203,7 +208,7 @@ function WelcomeOverlay({ onDismiss }) {
             dragTransition={{ bounceStiffness: 900, bounceDamping: 36 }}
             style={{ x: swipeX }}
             onDragEnd={handleSwipeEnd}
-            whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+            whileTap={prefersReducedMotion ? undefined : { scale: isLowPowerMode ? 0.99 : 0.98 }}
           >
             <span className="welcome-swipe__chevrons" aria-hidden="true">
               <span />

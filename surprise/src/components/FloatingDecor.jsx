@@ -1,9 +1,12 @@
 import { memo } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
 import { sparkleDots } from '../data/siteContent'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 function FloatingDecor() {
-  const prefersReducedMotion = useReducedMotion()
+  const { shouldReduceAmbientMotion } = usePerformanceMode()
+  const visibleSparkles = shouldReduceAmbientMotion
+    ? sparkleDots.slice(0, 3)
+    : sparkleDots
 
   return (
     <>
@@ -12,8 +15,8 @@ function FloatingDecor() {
       <div className="bg-texture bg-texture-three ambient-orb" />
 
       <div className="sparkle-field" aria-hidden="true">
-        {sparkleDots.map((sparkle) => (
-          <motion.span
+        {visibleSparkles.map((sparkle) => (
+          <span
             key={sparkle.id}
             className="sparkle"
             style={{
@@ -21,22 +24,10 @@ function FloatingDecor() {
               left: sparkle.left,
               width: sparkle.size,
               height: sparkle.size,
-              willChange: 'transform', // GPU acceleration
+              '--sparkle-delay': `${sparkle.delay}s`,
+              '--sparkle-duration': shouldReduceAmbientMotion ? '4.8s' : '3.2s',
             }}
-            animate={
-              prefersReducedMotion
-                ? undefined
-                : {
-                    y: [0, -10, 0],
-                    scale: [1, 1.12, 1],
-                  }
-            }
-            transition={{
-              duration: 3.2,
-              delay: sparkle.delay,
-              repeat: Number.POSITIVE_INFINITY,
-              ease: 'easeInOut',
-            }}
+            data-ambient-motion={shouldReduceAmbientMotion ? 'soft' : 'full'}
           />
         ))}
       </div>

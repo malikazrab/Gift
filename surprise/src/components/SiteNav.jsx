@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { navItems } from '../data/siteContent'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const { isLowPowerMode } = usePerformanceMode()
 
   useEffect(() => {
     const handleResize = () => {
@@ -27,7 +29,10 @@ function SiteNav() {
         className="site-nav"
         initial={{ y: -28, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.7, ease: 'easeOut' }}
+        transition={{
+          duration: isLowPowerMode ? 0.42 : 0.7,
+          ease: 'easeOut',
+        }}
       >
         <div className="site-nav__top">
           <div className="site-nav__brand">

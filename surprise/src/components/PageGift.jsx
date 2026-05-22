@@ -1,20 +1,27 @@
 import { motion, useReducedMotion } from 'framer-motion'
+import { getHoverAnimation, getRevealAnimation } from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 function PageGift({ gift }) {
   const prefersReducedMotion = useReducedMotion()
+  const { canHover, isLowPowerMode } = usePerformanceMode()
+  const revealAnimation = getRevealAnimation({
+    prefersReducedMotion,
+    isLowPowerMode,
+    amount: 0.35,
+    y: 30,
+    scale: 0.98,
+    duration: 0.75,
+  })
 
   return (
     <motion.section
       className="page-gift"
-      initial={prefersReducedMotion ? false : { opacity: 0, y: 30, scale: 0.98 }}
-      whileInView={prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }}
-      viewport={{ once: true, amount: 0.35 }}
-      transition={{ duration: 0.75, ease: [0.22, 1, 0.36, 1] }}
-      whileHover={
-        prefersReducedMotion
-          ? undefined
-          : { y: -8, transition: { duration: 0.28, ease: 'easeOut' } }
-      }
+      initial={revealAnimation.initial}
+      whileInView={revealAnimation.whileInView}
+      viewport={revealAnimation.viewport}
+      transition={revealAnimation.transition}
+      whileHover={getHoverAnimation({ canHover, isLowPowerMode, y: -8, duration: 0.28 })}
     >
       <div className="page-gift__top">
         <span className="page-gift__box" aria-hidden="true">

@@ -4,6 +4,7 @@ import { Route, Routes, useLocation } from 'react-router-dom'
 import FloatingDecor from './components/FloatingDecor'
 import SiteNav from './components/SiteNav'
 import WelcomeOverlay from './components/WelcomeOverlay'
+import { PerformanceModeProvider, usePerformanceMode } from './hooks/usePerformanceMode'
 import HomePage from './pages/HomePage'
 const PromisesPage = lazy(() => import('./pages/PromisesPage'))
 const ReasonsPage = lazy(() => import('./pages/ReasonsPage'))
@@ -39,13 +40,18 @@ function ScrollManager() {
   return null
 }
 
-function App() {
+function AppContent() {
   const location = useLocation()
   const prefersReducedMotion = useReducedMotion()
+  const { isLowPowerMode } = usePerformanceMode()
   const [welcomeActive, setWelcomeActive] = useState(true)
 
   return (
-    <div className={`app-shell ${welcomeActive ? 'welcome-active' : ''}`}>
+    <div
+      className={`app-shell ${welcomeActive ? 'welcome-active' : ''} ${
+        isLowPowerMode ? 'app-shell--low-power' : ''
+      }`}
+    >
       <ScrollManager />
       {welcomeActive ? <WelcomeOverlay onDismiss={() => setWelcomeActive(false)} /> : null}
       <div className="app-stage">
@@ -60,7 +66,10 @@ function App() {
               initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
               animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
               exit={prefersReducedMotion ? undefined : { opacity: 0, y: -16 }}
-              transition={ROUTE_TRANSITION}
+              transition={{
+                ...ROUTE_TRANSITION,
+                duration: isLowPowerMode ? 0.24 : ROUTE_TRANSITION.duration,
+              }}
             >
               <Routes location={location}>
                 <Route path="/" element={<HomePage />} />
@@ -77,6 +86,14 @@ function App() {
         </main>
       </div>
     </div>
+  )
+}
+
+function App() {
+  return (
+    <PerformanceModeProvider>
+      <AppContent />
+    </PerformanceModeProvider>
   )
 }
 

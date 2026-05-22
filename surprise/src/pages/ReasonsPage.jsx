@@ -3,10 +3,13 @@ import { motion, useReducedMotion } from 'framer-motion'
 import PageGift from '../components/PageGift'
 import PaperHeartReveal from '../components/PaperHeartReveal'
 import PageShell from '../components/PageShell'
+import { getHoverAnimation, getRevealAnimation } from '../data/animationPresets'
+import { usePerformanceMode } from '../hooks/usePerformanceMode'
 import { constellationNotes, pageGifts, reasonsList } from '../data/siteContent'
 
 function ReasonsPage() {
   const prefersReducedMotion = useReducedMotion()
+  const { canHover, isLowPowerMode } = usePerformanceMode()
 
   return (
     <PageShell
@@ -41,21 +44,21 @@ function ReasonsPage() {
             <motion.article
               className="reason-card"
               key={reason.id}
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 36, scale: 0.97 }}
-              whileInView={
-                prefersReducedMotion ? undefined : { opacity: 1, y: 0, scale: 1 }
-              }
-              viewport={{ once: true, amount: 0.28 }}
-              transition={{
-                duration: 0.78,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.28,
                 delay: index * 0.08,
-                ease: [0.22, 1, 0.36, 1],
-              }}
-              whileHover={
-                prefersReducedMotion
-                  ? undefined
-                  : { y: -10, rotate: index % 2 === 0 ? -1 : 1 }
-              }
+                duration: 0.78,
+                y: 36,
+                scale: 0.97,
+              })}
+              whileHover={getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                y: -10,
+                rotate: index % 2 === 0 ? -1 : 1,
+              })}
             >
               <span className="reason-index">{`0${index + 1}`}</span>
               <h3>{reason.title}</h3>
@@ -76,17 +79,22 @@ function ReasonsPage() {
             <motion.span
               className="constellation-pill"
               key={note}
-              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.88 }}
-              whileInView={prefersReducedMotion ? undefined : { opacity: 1, scale: 1 }}
-              viewport={{ once: true, amount: 0.35 }}
-              transition={{
-                duration: 0.45,
+              {...getRevealAnimation({
+                prefersReducedMotion,
+                isLowPowerMode,
+                amount: 0.35,
                 delay: index * 0.05,
-                ease: 'easeOut',
-              }}
-              whileHover={
-                prefersReducedMotion ? undefined : { y: -6, scale: 1.04 }
-              }
+                duration: 0.45,
+                y: 0,
+                scale: 0.88,
+              })}
+              whileHover={getHoverAnimation({
+                canHover,
+                isLowPowerMode,
+                y: -6,
+                scale: 1.04,
+                duration: 0.2,
+              })}
             >
               {note}
             </motion.span>
