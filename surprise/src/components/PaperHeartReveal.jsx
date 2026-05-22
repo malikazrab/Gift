@@ -40,6 +40,19 @@ function PaperHeartReveal({
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
     const durationScale = prefersReducedMotion ? 0.01 : 1
 
+    gsap.set(
+      [
+        heartShellRef.current,
+        heartLeftLobeRef.current,
+        heartRightLobeRef.current,
+        heartTailRef.current,
+        heartBackdropRef.current,
+        heartSealRef.current,
+        photoRevealRef.current,
+      ],
+      { force3D: true },
+    )
+
     if (heartOpen) {
       tl.to(heartShellRef.current, {
         y: -10,
@@ -103,7 +116,6 @@ function PaperHeartReveal({
           {
             autoAlpha: 1,
             scale: 1.06,
-            filter: 'drop-shadow(0 18px 34px rgba(255, 124, 165, 0.22))',
             duration: 0.72 * durationScale,
             ease: 'power2.out',
           },
@@ -111,12 +123,11 @@ function PaperHeartReveal({
         )
         .fromTo(
           photoRevealRef.current,
-          { autoAlpha: 0, y: 42, scale: 0.88, filter: 'blur(14px)' },
+          { autoAlpha: 0, y: 42, scale: 0.88 },
           {
             autoAlpha: 1,
             y: 0,
             scale: 1,
-            filter: 'blur(0px)',
             duration: 0.95 * durationScale,
             ease: 'power3.out',
           },
@@ -127,7 +138,6 @@ function PaperHeartReveal({
         autoAlpha: 0,
         y: 26,
         scale: 0.94,
-        filter: 'blur(10px)',
         duration: 0.3 * durationScale,
       })
         .to(
@@ -135,7 +145,6 @@ function PaperHeartReveal({
           {
             autoAlpha: 0.72,
             scale: 1,
-            filter: 'drop-shadow(0 0 0 rgba(255, 124, 165, 0))',
             duration: 0.42 * durationScale,
           },
           0.02,

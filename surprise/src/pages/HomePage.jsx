@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
-import { motion, useReducedMotion } from 'framer-motion'
+import { motion, useInView, useReducedMotion } from 'framer-motion'
+import { useRef } from 'react'
 import PageShell from '../components/PageShell'
 import PageGift from '../components/PageGift'
 import PaperHeartReveal from '../components/PaperHeartReveal'
@@ -12,6 +13,8 @@ import {
 
 function HomePage() {
   const prefersReducedMotion = useReducedMotion()
+  const heroRef = useRef(null)
+  const heroInView = useInView(heroRef, { amount: 0.2 })
 
   return (
     <PageShell
@@ -29,7 +32,7 @@ function HomePage() {
         </>
       }
     >
-      <section className="hero-section hero-section--inner">
+      <section className="hero-section hero-section--inner" ref={heroRef}>
         <div className="floating-hearts" aria-hidden="true">
           {floatingHearts.map((heart) => (
             <motion.span
@@ -45,7 +48,7 @@ function HomePage() {
               }}
               initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.75 }}
               animate={
-                prefersReducedMotion
+                prefersReducedMotion || !heroInView
                   ? undefined
                   : {
                       x: [0, heart.driftX, heart.driftX * -0.55, 0],

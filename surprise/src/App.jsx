@@ -1,4 +1,4 @@
-import { useEffect, lazy } from 'react'
+import { useEffect, lazy, useState } from 'react'
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion'
 import { Route, Routes, useLocation } from 'react-router-dom'
 import FloatingDecor from './components/FloatingDecor'
@@ -42,37 +42,40 @@ function ScrollManager() {
 function App() {
   const location = useLocation()
   const prefersReducedMotion = useReducedMotion()
+  const [welcomeActive, setWelcomeActive] = useState(true)
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell ${welcomeActive ? 'welcome-active' : ''}`}>
       <ScrollManager />
-      <WelcomeOverlay />
-      <FloatingDecor />
-      <SiteNav />
+      {welcomeActive ? <WelcomeOverlay onDismiss={() => setWelcomeActive(false)} /> : null}
+      <div className="app-stage">
+        <FloatingDecor />
+        <SiteNav />
 
-      <main className="app-main">
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={location.pathname}
-            className="route-stage"
-            initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-            animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-            exit={prefersReducedMotion ? undefined : { opacity: 0, y: -16 }}
-            transition={ROUTE_TRANSITION}
-          >
-            <Routes location={location}>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/story" element={<StoryPage />} />
-              <Route path="/reasons" element={<ReasonsPage />} />
-              <Route path="/promises" element={<PromisesPage />} />
-            </Routes>
-          </motion.div>
-        </AnimatePresence>
+        <main className="app-main">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname}
+              className="route-stage"
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
+              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
+              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -16 }}
+              transition={ROUTE_TRANSITION}
+            >
+              <Routes location={location}>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/story" element={<StoryPage />} />
+                <Route path="/reasons" element={<ReasonsPage />} />
+                <Route path="/promises" element={<PromisesPage />} />
+              </Routes>
+            </motion.div>
+          </AnimatePresence>
 
-        <footer className="footer-note">
-          <p>Forever yours, Azrab.</p>
-        </footer>
-      </main>
+          <footer className="footer-note">
+            <p>Forever yours, Azrab.</p>
+          </footer>
+        </main>
+      </div>
     </div>
   )
 }
