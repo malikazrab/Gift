@@ -1,0 +1,21 @@
+<svg width="900" height="1100" viewBox="0 0 900 1100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="900" height="1100" rx="56" fill="url(#bg)"/>
+  <rect x="44" y="44" width="812" height="1012" rx="36" stroke="rgba(255,255,255,0.5)" stroke-width="2"/>
+  <circle cx="450" cy="340" r="128" fill="rgba(255,255,255,0.14)"/>
+  <path d="M379 328C379 288.788 410.788 257 450 257C489.212 257 521 288.788 521 328C521 367.212 489.212 399 450 399C410.788 399 379 367.212 379 328Z" fill="rgba(255,255,255,0.75)"/>
+  <path d="M274 665C274 565.589 354.589 485 454 485H446C545.411 485 626 565.589 626 665V679H274V665Z" fill="rgba(255,255,255,0.75)"/>
+  <path d="M450 771C516.089 714.44 556 675.871 556 625.818C556 589.404 527.196 561 491.5 561C471.318 561 451.955 570.443 440 585.319C428.045 570.443 408.682 561 388.5 561C352.804 561 324 589.404 324 625.818C324 675.871 363.911 714.44 430 771L440 779L450 771Z" fill="#F8BBC9"/>
+  <text x="450" y="864" text-anchor="middle" fill="white" font-family="Georgia, serif" font-size="52" letter-spacing="2">
+    Add your favorite photo
+  </text>
+  <text x="450" y="924" text-anchor="middle" fill="rgba(255,255,255,0.82)" font-family="Arial, sans-serif" font-size="30">
+    Replace /public/couple-placeholder.svg with your real image
+  </text>
+  <defs>
+    <linearGradient id="bg" x1="98" y1="58" x2="794" y2="1048" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#B35A7D"/>
+      <stop offset="0.5" stop-color="#7D395B"/>
+      <stop offset="1" stop-color="#2D1831"/>
+    </linearGradient>
+  </defs>
+</svg>

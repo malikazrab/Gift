@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #fff5f2;
+  --bg-deep: #ffe8e2;
+  --panel: rgba(255, 252, 249, 0.68);
+  --border-strong: rgba(182, 72, 101, 0.14);
+  --text: #6d4c57;
+  --text-strong: #3d202a;
+  --muted: #805d66;
+  --accent-strong: #c14572;
+  --shadow-soft: 0 18px 50px rgba(123, 45, 68, 0.12);
+  --heading: 'Cormorant Garamond', Georgia, serif;
+  --sans: 'Manrope', 'Segoe UI', sans-serif;
+
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, rgba(255, 214, 223, 0.9), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 239, 197, 0.75), transparent 30%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+  font-family: var(--sans);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  overflow-x: hidden;
+  background:
+    radial-gradient(circle at top left, rgba(255, 214, 223, 0.9), transparent 28%),
+    radial-gradient(circle at top right, rgba(255, 239, 197, 0.75), transparent 30%),
+    linear-gradient(180deg, var(--bg), var(--bg-deep));
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(circle at center, black, transparent 86%);
+  opacity: 0.16;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+img {
+  max-width: 100%;
+}
+
+#root {
+  width: min(100%, 1280px);
+  margin: 0 auto;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--heading);
+  color: var(--text-strong);
+}
+
+p {
+  margin: 0;
+  line-height: 1.7;
+}
+
+::selection {
+  background: rgba(193, 69, 114, 0.18);
+}
