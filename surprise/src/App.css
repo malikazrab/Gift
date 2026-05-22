@@ -272,6 +272,20 @@
   box-shadow: 0 18px 45px rgba(123, 45, 68, 0.1);
   backface-visibility: hidden;
   will-change: transform, opacity;
+  transition:
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease,
+    backdrop-filter 0.28s ease,
+    -webkit-backdrop-filter 0.28s ease;
+}
+
+.site-nav.is-scrolled {
+  background: rgba(255, 250, 247, 0.52);
+  border-color: rgba(182, 72, 101, 0.1);
+  backdrop-filter: blur(22px) saturate(1.08);
+  -webkit-backdrop-filter: blur(22px) saturate(1.08);
+  box-shadow: 0 14px 36px rgba(123, 45, 68, 0.12);
 }
 
 .site-nav__top {
@@ -1480,7 +1494,7 @@
   .gifts-grid,
   .dream-grid,
   .insight-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .page-description,
@@ -1665,19 +1679,21 @@
 }
 
 @supports (content-visibility: auto) {
-  .low-power-mode .page-content > section,
-  .low-power-mode .page-gift,
-  .low-power-mode .final-letter,
-  .low-power-mode .timeline-card,
-  .low-power-mode .love-note,
-  .low-power-mode .promise-card,
-  .low-power-mode .journey-card,
-  .low-power-mode .reason-card,
-  .low-power-mode .gift-card,
-  .low-power-mode .dream-card,
-  .low-power-mode .insight-card {
-    content-visibility: auto;
-    contain-intrinsic-size: 1px 520px;
+  @media (min-width: 901px) {
+    .low-power-mode .page-content > section,
+    .low-power-mode .page-gift,
+    .low-power-mode .final-letter,
+    .low-power-mode .timeline-card,
+    .low-power-mode .love-note,
+    .low-power-mode .promise-card,
+    .low-power-mode .journey-card,
+    .low-power-mode .reason-card,
+    .low-power-mode .gift-card,
+    .low-power-mode .dream-card,
+    .low-power-mode .insight-card {
+      content-visibility: auto;
+      contain-intrinsic-size: 1px 520px;
+    }
   }
 }
 
@@ -1706,6 +1722,13 @@
 .app-shell--low-power .heart-photo-card {
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+}
+
+.low-power-mode .site-nav.is-scrolled,
+.app-shell--low-power .site-nav.is-scrolled {
+  background: rgba(255, 250, 247, 0.62);
+  backdrop-filter: blur(12px) saturate(1.04);
+  -webkit-backdrop-filter: blur(12px) saturate(1.04);
 }
 
 .low-power-mode .welcome-card,

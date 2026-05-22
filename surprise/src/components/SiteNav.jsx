@@ -6,6 +6,7 @@ import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
 function SiteNav() {
   const [menuOpen, setMenuOpen] = useState(false)
+  const [hasScrolled, setHasScrolled] = useState(false)
   const { isLowPowerMode } = usePerformanceMode()
 
   useEffect(() => {
@@ -23,10 +24,27 @@ function SiteNav() {
     }
   }, [])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined
+    }
+
+    const handleScroll = () => {
+      setHasScrolled(window.scrollY > 8)
+    }
+
+    handleScroll()
+    window.addEventListener('scroll', handleScroll, { passive: true })
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
+
   return (
     <div className="site-nav-shell">
       <motion.header
-        className="site-nav"
+        className={`site-nav ${hasScrolled ? 'is-scrolled' : ''}`}
         initial={{ y: -28, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{

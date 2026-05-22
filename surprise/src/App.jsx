@@ -54,9 +54,9 @@ function AppContent() {
     >
       <ScrollManager />
       {welcomeActive ? <WelcomeOverlay onDismiss={() => setWelcomeActive(false)} /> : null}
+      <SiteNav />
       <div className="app-stage">
         <FloatingDecor />
-        <SiteNav />
 
         <main className="app-main">
           <AnimatePresence mode="wait">
