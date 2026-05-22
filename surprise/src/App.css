@@ -427,17 +427,28 @@
   min-height: 30rem;
 }
 
+.hero-section > :not(.floating-hearts) {
+  position: relative;
+  z-index: 1;
+}
+
 .floating-hearts {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  z-index: 0;
 }
 
 .floating-heart {
   position: absolute;
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  color: rgba(185, 74, 108, 0.3);
+  top: var(--heart-top);
+  left: var(--heart-left);
+  font-size: var(--heart-size, clamp(1rem, 2vw, 1.5rem));
+  line-height: 1;
+  color: rgba(201, 103, 135, 0.4);
+  filter: drop-shadow(0 10px 16px rgba(225, 150, 176, 0.22));
+  will-change: transform, opacity;
 }
 
 .hero-badge {
@@ -1266,8 +1277,15 @@
     padding-top: 0.8rem;
   }
 
-  .floating-heart:nth-child(n + 9) {
-    display: none;
+  .floating-hearts {
+    inset: 0.15rem;
+  }
+
+  .floating-heart {
+    top: var(--heart-top-mobile, var(--heart-top));
+    left: var(--heart-left-mobile, var(--heart-left));
+    font-size: var(--heart-size-mobile, var(--heart-size, 1rem));
+    color: rgba(201, 103, 135, 0.34);
   }
 }
 

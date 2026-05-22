@@ -35,8 +35,37 @@ function HomePage() {
             <motion.span
               className="floating-heart"
               key={heart.id}
-              style={{ top: heart.top, left: heart.left }}
-              whileHover={prefersReducedMotion ? undefined : { scale: 1.2 }}
+              style={{
+                '--heart-top': heart.top,
+                '--heart-left': heart.left,
+                '--heart-top-mobile': heart.mobileTop,
+                '--heart-left-mobile': heart.mobileLeft,
+                '--heart-size': heart.size,
+                '--heart-size-mobile': heart.mobileSize,
+              }}
+              initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.75 }}
+              animate={
+                prefersReducedMotion
+                  ? undefined
+                  : {
+                      x: [0, heart.driftX, heart.driftX * -0.55, 0],
+                      y: [0, heart.driftY * -1, heart.driftY * 0.45, 0],
+                      rotate: [0, heart.rotate, heart.rotate * -0.45, 0],
+                      scale: [1, 1.08, 0.96, 1.03, 1],
+                      opacity: [0.22, 0.42, 0.3, 0.38, 0.22],
+                    }
+              }
+              transition={{
+                duration: heart.duration,
+                delay: heart.delay,
+                repeat: Number.POSITIVE_INFINITY,
+                ease: 'easeInOut',
+              }}
+              whileHover={
+                prefersReducedMotion
+                  ? undefined
+                  : { scale: 1.16, opacity: 0.5, transition: { duration: 0.24 } }
+              }
             >
               ♥
             </motion.span>
