@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useRef, useState } from 'react'
 import {
   animate,
   motion,
@@ -19,6 +19,7 @@ function WelcomeOverlay({ onDismiss }) {
   const [welcomeClosing, setWelcomeClosing] = useState(false)
   const [swipeHandleWidth, setSwipeHandleWidth] = useState(70)
   const [maxSwipeDistance, setMaxSwipeDistance] = useState(0)
+  const [swipeReady, setSwipeReady] = useState(false)
   const swipeX = useMotionValue(0)
   const swipeProgress = useTransform(() => {
     const totalDistance = maxSwipeDistance + swipeHandleWidth
@@ -29,30 +30,57 @@ function WelcomeOverlay({ onDismiss }) {
     return (swipeX.get() + swipeHandleWidth) / totalDistance
   })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined
+    }
+
     const updateMaxSwipeDistance = () => {
       if (!swipeTrackRef.current) {
         return
       }
 
-      const nextHandleWidth = swipeHandleRef.current?.offsetWidth || swipeHandleWidth
+      const nextHandleWidth = swipeHandleRef.current?.offsetWidth || 70
       const nextDistance = Math.max(
         swipeTrackRef.current.offsetWidth - nextHandleWidth,
         0,
       )
 
-      setSwipeHandleWidth(nextHandleWidth)
-      setMaxSwipeDistance(nextDistance)
-      swipeX.set((current) => Math.min(current, nextDistance))
+      setSwipeHandleWidth((currentWidth) =>
+        currentWidth === nextHandleWidth ? currentWidth : nextHandleWidth,
+      )
+      setMaxSwipeDistance((currentDistance) =>
+        currentDistance === nextDistance ? currentDistance : nextDistance,
+      )
+      setSwipeReady(nextDistance > 0)
+      swipeX.set(Math.min(swipeX.get(), nextDistance))
     }
 
     updateMaxSwipeDistance()
+    const resizeObserver =
+      typeof ResizeObserver === 'undefined'
+        ? null
+        : new ResizeObserver(() => {
+            updateMaxSwipeDistance()
+          })
+
+    if (resizeObserver) {
+      if (swipeTrackRef.current) {
+        resizeObserver.observe(swipeTrackRef.current)
+      }
+
+      if (swipeHandleRef.current) {
+        resizeObserver.observe(swipeHandleRef.current)
+      }
+    }
+
     window.addEventListener('resize', updateMaxSwipeDistance)
 
     return () => {
       window.removeEventListener('resize', updateMaxSwipeDistance)
+      resizeObserver?.disconnect()
     }
-  }, [swipeHandleWidth, swipeX])
+  }, [swipeX])
 
   const swipeHintOpacity = useTransform(
     swipeX,
@@ -167,7 +195,7 @@ function WelcomeOverlay({ onDismiss }) {
           <motion.div
             className="welcome-swipe__handle"
             ref={swipeHandleRef}
-            drag="x"
+            drag={swipeReady ? 'x' : false}
             dragDirectionLock
             dragConstraints={{ left: 0, right: maxSwipeDistance }}
             dragElastic={0.08}

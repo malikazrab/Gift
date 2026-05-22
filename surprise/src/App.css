@@ -144,7 +144,7 @@
   cursor: grab;
   will-change: transform;
   transform: translateZ(0);
-  touch-action: pan-y;
+  touch-action: none;
   user-select: none;
 }
 
@@ -225,7 +225,7 @@
   transform: translateZ(0);
 }
 
-.site-nav {
+.site-nav-shell {
   position: fixed;
   inset: 1rem 1rem auto;
   z-index: 20;
@@ -233,10 +233,14 @@
   margin: 0 auto;
   left: 50%;
   transform: translateX(-50%);
+}
+
+.site-nav {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 0.9rem;
+  width: 100%;
   padding: 0.78rem 1rem;
   border: 1px solid rgba(182, 72, 101, 0.14);
   border-radius: 999px;
@@ -1287,9 +1291,12 @@
     padding: 1.2rem;
   }
 
-  .site-nav {
+  .site-nav-shell {
     inset: 0.75rem 0.75rem auto;
     width: calc(100% - 1.5rem);
+  }
+
+  .site-nav {
     border-radius: 1.4rem;
   }
 
