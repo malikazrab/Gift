@@ -116,7 +116,7 @@ function HomePage() {
           animate={heroTitleAnimation.animate}
           transition={heroTitleAnimation.transition}
         >
-          To the woman who makes my whole world softer, brighter, and alive.
+          To Maria, who makes my whole world softer, brighter, and alive.
         </motion.h2>
         <motion.p
           className="hero-text"

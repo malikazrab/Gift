@@ -41,7 +41,7 @@ function PromisesPage() {
       <section className="content-section">
         <div className="content-section__heading">
           <p className="eyebrow">Wrapped feelings</p>
-          <h2>Small glowing gifts for the woman I adore.</h2>
+          <h2>Small glowing gifts for Maria, whom I adore.</h2>
         </div>
 
         <div className="gifts-grid">
