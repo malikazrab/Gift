@@ -1,11 +1,11 @@
-import { StrictMode, lazy, Suspense } from 'react'
+import { StrictMode, Suspense } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.jsx'
 
 // Enable optimizations in production
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'production') {
+if (typeof window !== 'undefined' && import.meta.env.PROD) {
   // Prevent layout thrashing from animations
   window.requestAnimationFrame(() => {
     document.documentElement.style.scrollBehavior = 'smooth'
