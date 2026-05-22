@@ -178,7 +178,10 @@ function WelcomeOverlay({ onDismiss }) {
           ease: [0.22, 1, 0.36, 1],
         }}
       >
-        <p className="welcome-label">For Maria</p>
+        <p className="welcome-dedication">
+          <strong>For you, Maria.</strong> Created by "Your Demogorgan" from the depths of my
+          heart.
+        </p>
         <h2>My sweetest surprise begins with you.</h2>
         <p>
           This little world was made with love, soft light, and a heart full of

@@ -45,6 +45,7 @@ function AppContent() {
   const prefersReducedMotion = useReducedMotion()
   const { isLowPowerMode } = usePerformanceMode()
   const [welcomeActive, setWelcomeActive] = useState(true)
+  const pageReady = !welcomeActive
 
   return (
     <div
@@ -61,11 +62,23 @@ function AppContent() {
         <main className="app-main">
           <AnimatePresence mode="wait">
             <motion.div
-              key={location.pathname}
+              key={`${location.pathname}-${pageReady ? 'ready' : 'preview'}`}
               className="route-stage"
-              initial={prefersReducedMotion ? false : { opacity: 0, y: 24 }}
-              animate={prefersReducedMotion ? undefined : { opacity: 1, y: 0 }}
-              exit={prefersReducedMotion ? undefined : { opacity: 0, y: -16 }}
+              initial={
+                prefersReducedMotion || !pageReady
+                  ? false
+                  : { opacity: 0, y: 24 }
+              }
+              animate={
+                prefersReducedMotion || !pageReady
+                  ? undefined
+                  : { opacity: 1, y: 0 }
+              }
+              exit={
+                prefersReducedMotion || !pageReady
+                  ? undefined
+                  : { opacity: 0, y: -16 }
+              }
               transition={{
                 ...ROUTE_TRANSITION,
                 duration: isLowPowerMode ? 0.24 : ROUTE_TRANSITION.duration,
