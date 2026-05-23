@@ -33,7 +33,7 @@ function StoryPage() {
           helperText="A paper heart for the memories that made loving you feel inevitable."
           photoCopy="Every chapter of us feels softer, brighter, and more worth keeping because it has your name inside it."
           regionLabel="A heart reveal for our story page"
-          closedLabel="Tap to open our chapter"
+          closedLabel="Swipe up to open our chapter"
           openLabel="Close this chapter"
         />
       </section>

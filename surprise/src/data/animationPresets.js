@@ -28,19 +28,19 @@ export const DEFAULT_EASE = [0.22, 1, 0.36, 1]
 
 // Fade in variants
 export const fadeInVariants = {
-  hidden: { opacity: 0 },
+  hidden: { opacity: 0, willChange: 'opacity' },
   visible: { opacity: 1 },
 }
 
 // Slide up variants
 export const slideUpVariants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 24, willChange: 'transform, opacity' },
   visible: { opacity: 1, y: 0 },
 }
 
 // Scale fade variants
 export const scaleUpVariants = {
-  hidden: { opacity: 0, scale: 0.92 },
+  hidden: { opacity: 0, scale: 0.92, willChange: 'transform, opacity' },
   visible: { opacity: 1, scale: 1 },
 }
 

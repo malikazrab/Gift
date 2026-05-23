@@ -33,7 +33,7 @@ function PromisesPage() {
           helperText="A paper heart carrying the quiet promises I want to keep for you."
           photoCopy="If the future has one shape I trust, it is the shape of a life where I keep choosing you with tenderness and honesty."
           regionLabel="A heart reveal for future promises"
-          closedLabel="Tap to open our future"
+          closedLabel="Swipe up to open our future"
           openLabel="Hold the promise"
         />
       </section>

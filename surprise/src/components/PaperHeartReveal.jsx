@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { motion, useReducedMotion } from 'framer-motion'
+import { animate, motion, useMotionValue, useReducedMotion, useTransform } from 'framer-motion'
 import gsap from 'gsap'
 import couplePhoto from '../assets/maria-heart-photo.jpeg'
 import {
@@ -8,12 +8,16 @@ import {
 } from '../data/animationPresets'
 import { usePerformanceMode } from '../hooks/usePerformanceMode'
 
+const DEFAULT_HEART_SWIPE_DISTANCE = 88
+const HEART_SWIPE_COMPLETE_THRESHOLD = 0.72
+const HEART_SWIPE_VELOCITY_THRESHOLD = 760
+
 function PaperHeartReveal({
   photo = couplePhoto,
   photoAlt = 'Azrab and Maria together',
   photoCopy = 'Maria, you are my favorite blessing and the most beautiful page in my story.',
-  helperText = 'A soft little paper heart that opens into your favorite memory.',
-  closedLabel = 'Tap to unfold our heart',
+  helperText = 'Swipe the little heart upward and let your favorite memory bloom.',
+  closedLabel = 'Swipe up to unfold our heart',
   openLabel = 'Fold it back',
   regionLabel = 'A photo memory of Azrab and Maria',
 }) {
@@ -28,6 +32,15 @@ function PaperHeartReveal({
   const heartSealRef = useRef(null)
   const photoRevealRef = useRef(null)
   const [heartOpen, setHeartOpen] = useState(false)
+  const [swipeDistance, setSwipeDistance] = useState(DEFAULT_HEART_SWIPE_DISTANCE)
+  const sealY = useMotionValue(0)
+  const swipeProgress = useTransform(() => {
+    if (!swipeDistance) {
+      return 0
+    }
+
+    return Math.min(Math.abs(sealY.get()) / swipeDistance, 1)
+  })
 
   useEffect(() => {
     if (
@@ -221,6 +234,39 @@ function PaperHeartReveal({
     return () => tl.kill()
   }, [heartOpen, isLowPowerMode, prefersReducedMotion])
 
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return undefined
+    }
+
+    const updateSwipeDistance = () => {
+      if (!heartShellRef.current) {
+        return
+      }
+
+      const nextDistance = Math.max(
+        Math.min(heartShellRef.current.offsetHeight * 0.22, 108),
+        72,
+      )
+
+      setSwipeDistance(nextDistance)
+      sealY.set(Math.max(sealY.get(), -nextDistance))
+    }
+
+    updateSwipeDistance()
+    window.addEventListener('resize', updateSwipeDistance)
+
+    return () => {
+      window.removeEventListener('resize', updateSwipeDistance)
+    }
+  }, [sealY])
+
+  useEffect(() => {
+    if (!heartOpen) {
+      sealY.set(0)
+    }
+  }, [heartOpen, sealY])
+
   const heartEntrance = getRevealAnimation({
     prefersReducedMotion,
     isLowPowerMode,
@@ -230,13 +276,49 @@ function PaperHeartReveal({
     duration: 0.9,
   })
 
+  const handleHeartSwipeEnd = async (_, info) => {
+    if (heartOpen || !swipeDistance) {
+      return
+    }
+
+    const currentY = sealY.get()
+    const progress = Math.abs(currentY) / swipeDistance
+    const shouldOpen =
+      progress >= HEART_SWIPE_COMPLETE_THRESHOLD ||
+      (info.velocity.y <= -HEART_SWIPE_VELOCITY_THRESHOLD && progress > 0.28)
+
+    if (shouldOpen) {
+      await animate(sealY, -swipeDistance, {
+        type: prefersReducedMotion ? 'tween' : 'spring',
+        stiffness: isLowPowerMode ? 220 : 280,
+        damping: isLowPowerMode ? 24 : 20,
+        duration: prefersReducedMotion ? 0.18 : undefined,
+      })
+      setHeartOpen(true)
+      return
+    }
+
+    await animate(sealY, 0, {
+      type: prefersReducedMotion ? 'tween' : 'spring',
+      stiffness: isLowPowerMode ? 280 : 360,
+      damping: isLowPowerMode ? 28 : 24,
+      duration: prefersReducedMotion ? 0.16 : undefined,
+    })
+  }
+
+  const handleHeartShellClick = (event) => {
+    if (heartOpen || event.detail === 0) {
+      setHeartOpen((current) => !current)
+    }
+  }
+
   return (
     <div className={`heart-stage ${heartOpen ? 'is-open' : ''}`}>
       <motion.button
         type="button"
         className={`heart-shell paper-heart-shell ${heartOpen ? 'open' : ''}`}
         ref={heartShellRef}
-        onClick={() => setHeartOpen((current) => !current)}
+        onClick={handleHeartShellClick}
         aria-expanded={heartOpen}
         aria-controls="heart-photo-reveal"
         aria-describedby="heart-help"
@@ -260,6 +342,12 @@ function PaperHeartReveal({
         <span className="paper-heart-scene" aria-hidden="true">
           <span className="paper-heart-backdrop" ref={heartBackdropRef} />
           <span className="paper-heart-fold" ref={heartFoldRef} />
+          <span className="paper-heart-swipe-track">
+            <motion.span
+              className="paper-heart-swipe-bar"
+              style={{ scaleY: swipeProgress }}
+            />
+          </span>
           <span
             className="paper-heart-lobe paper-heart-lobe-left"
             ref={heartLeftLobeRef}
@@ -269,9 +357,22 @@ function PaperHeartReveal({
             ref={heartRightLobeRef}
           />
           <span className="paper-heart-tail" ref={heartTailRef} />
-          <span className="paper-heart-seal" ref={heartSealRef}>
-            ♥
-          </span>
+          <motion.span
+            className="paper-heart-seal-wrap"
+            drag={heartOpen ? false : 'y'}
+            dragConstraints={{ top: -swipeDistance, bottom: 0 }}
+            dragElastic={0.08}
+            dragMomentum={false}
+            style={{ y: sealY }}
+            onDragEnd={handleHeartSwipeEnd}
+            onPointerDown={(event) => event.stopPropagation()}
+            onClick={(event) => event.stopPropagation()}
+            whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+          >
+            <span className="paper-heart-seal" ref={heartSealRef}>
+              ♥
+            </span>
+          </motion.span>
           <span className="paper-heart-title">
             {heartOpen ? openLabel : closedLabel}
           </span>

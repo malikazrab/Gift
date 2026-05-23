@@ -33,7 +33,7 @@ function ReasonsPage() {
           helperText="A heart for the reasons that keep choosing you, over and over."
           photoCopy="No list is ever enough for you, but my heart keeps trying because loving you deserves to be said in every possible way."
           regionLabel="A heart reveal for reasons I love Maria"
-          closedLabel="Tap to reveal why"
+          closedLabel="Swipe up to reveal why"
           openLabel="Keep it close"
         />
       </section>

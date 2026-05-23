@@ -176,7 +176,7 @@ function HomePage() {
       <section className="content-section content-section--heart">
         <div className="content-section__heading">
           <p className="eyebrow">Touch my heart</p>
-          <h2>Tap the heart and let our memory bloom.</h2>
+          <h2>Swipe the little heart and let our memory bloom.</h2>
         </div>
         <PaperHeartReveal />
       </section>
